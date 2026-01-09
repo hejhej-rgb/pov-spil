@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simpelt POV Skydespil</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #111;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+    #game {
+      position: relative;
+    }
+    canvas {
+      background: #222;
+      cursor: crosshair;
+      border: 2px solid #444;
+    }
+    #info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.6);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div id="game">
+    <canvas id="canvas" width="800" height="500"></canvas>
+    <div id="info">Klik på plakaten for at skyde</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const targetImg = new Image();
+    targetImg.src = 'a01142bd-1dcd-493b-bcdc-a657b84f06c3.png';
+
+    let target = {
+      x: 300,
+      y: 150,
+      w: 180,
+      h: 240
+    };
+
+    let score = 0;
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // simple wall/background
+      ctx.fillStyle = '#333';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // draw target (plakat)
+      ctx.drawImage(targetImg, target.x, target.y, target.w, target.h);
+
+      // score
+      ctx.fillStyle = 'white';
+      ctx.font = '18px Arial';
+      ctx.fillText('Score: ' + score, 10, canvas.height - 15);
+    }
+
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+
+      if (
+        mx > target.x &&
+        mx < target.x + target.w &&
+        my > target.y &&
+        my < target.y + target.h
+      ) {
+        score++;
+        // move target to random position
+        target.x = Math.random() * (canvas.width - target.w);
+        target.y = Math.random() * (canvas.height - target.h);
+      }
+    });
+
+    targetImg.onload = () => {
+      setInterval(draw, 1000 / 60);
+    };
+  </script>
+</body>
+</html>
